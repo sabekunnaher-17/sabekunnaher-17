@@ -124,11 +124,11 @@ def render(data):
     sums = {key: sum(c[key] for c in data['collections']) for key in (
         'totalCommitContributions', 'totalIssueContributions', 'totalPullRequestContributions',
         'totalPullRequestReviewContributions', 'totalRepositoryContributions')}
-    hero = text(40,40,'ANTORA / DEVELOPER WORKSPACE',13,'#53f7ad',600)
+    hero = text(40,40,'ANTORA / FULL-STACK DEVELOPMENT',13,'#53f7ad',600)
     hero += text(40,106,'Sabekunnaher Antora',42,'#edfff5',700)
-    hero += text(42,149,'CSE student. Full-stack developer in the making.',18,'#b4d5c3')
-    hero += text(42,190,'Building thoughtful software, from interfaces to data.',18)
-    hero += rect(40,219,525,39,'#153625',8) + text(56,245,'FOCUS   C# / ASP.NET Core / React / SQL Server',15,'#53f7ad')
+    hero += text(42,149,'Full-stack development / Testing / Research',18,'#b4d5c3')
+    hero += text(42,190,'Secure applications. Tested workflows. Useful data.',17)
+    hero += rect(40,219,552,39,'#153625',8) + text(56,245,'C# / ASP.NET Core / EF Core / SQL Server / Java',15,'#53f7ad')
     hero += text(42,295,'AIUB  /  DHAKA, BANGLADESH',13)
     for r in (55,85,115):
         hero += f'<circle cx="802" cy="154" r="{r}" fill="none" stroke="#285c43" stroke-width="1"/>'
@@ -136,9 +136,24 @@ def render(data):
     hero += '<circle class="pulse" cx="802" cy="154" r="42" fill="#17472d"/>'
     hero += text(771,168,'SA',36,'#53f7ad',700)
     hero += '<g class="orbit"><circle cx="887" cy="154" r="7" fill="#73ddd0"/></g>'
-    svg('header.svg',326,hero,'Sabekunnaher Antora — developer workspace','CSE student at AIUB pursuing full-stack development. C#, ASP.NET Core, React and SQL Server.')
+    svg('header.svg',326,hero,'Sabekunnaher Antora — full-stack development','CSE student at AIUB. Full-stack development, software testing and research. ASP.NET Core, EF Core, SQL Server and Java.')
 
-    stats = text(30,37,'01 / GITHUB AT A GLANCE',13,'#53f7ad',600)
+    focus = text(30,37,'PROFILE / ENGINEERING WITH PURPOSE',13,'#53f7ad',600)
+    cards = [
+        ('BUILD','Full-stack applications','ASP.NET Core + SQL Server','Web, desktop and graphics'),
+        ('VERIFY','Software quality','Unit / integration / E2E','Secure, tested workflows'),
+        ('COLLABORATE','Research + leadership','Four-member thesis team','Planning, analysis, review')]
+    for i,(label,heading,line1,line2) in enumerate(cards):
+        x = 24+i*312
+        focus += rect(x,61,288,137)
+        focus += text(x+17,89,label,12,COLORS[i],600)
+        focus += text(x+17,121,heading,16,'#edfff5',600)
+        focus += text(x+17,153,line1,13)
+        focus += text(x+17,177,line2,13)
+    svg('profile-focus.svg',222,focus,'Engineering, quality and collaboration',
+        'Full-stack applications; unit, integration and end-to-end testing; research and thesis-team leadership, as described in the CV.')
+
+    stats = text(30,37,'PUBLIC / GITHUB AT A GLANCE',13,'#53f7ad',600)
     stats += text(665,37,'PUBLIC DATA / '+data['end'],13)
     values = [(data['user']['public_repos'],'Public repositories'),(data['user']['followers'],'Followers'),
               (data['user']['following'],'Following'),(total,'Contributions in period')]
@@ -147,7 +162,7 @@ def render(data):
         stats += rect(x,60,220,117) + text(x+19,114,value,36,'#edfff5',700) + text(x+19,148,label,12)
     svg('overview.svg',201,stats,'GitHub public account overview',str(values))
 
-    chart = text(30,37,'02 / ACTIVITY + DECORATIVE CALENDAR ART',13,'#53f7ad',600)
+    chart = text(30,37,'ACTIVITY / INCLUDES DECORATIVE CALENDAR ART',13,'#53f7ad',600)
     chart += text(30,73,f'{total} contributions  /  {active} active days',26,'#edfff5',600)
     chart += text(30,101,'Includes backdated artwork cells; not a historical daily coding streak.',13)
     # Sunday-aligned columns; outside-period cells stay blank, zero days are dark.
@@ -179,7 +194,7 @@ def render(data):
     languages = Counter()
     for r in repos:
         languages.update(r['languages'])
-    language_body = text(30,37,'03 / LANGUAGE SIGNALS',13,'#53f7ad',600)
+    language_body = text(30,37,'CODE / LANGUAGE SIGNALS',13,'#53f7ad',600)
     language_body += text(30,75,'Primary language per repo',20,'#edfff5',600)
     language_body += text(510,75,'Distribution by code bytes',20,'#edfff5',600)
     language_body += text(30,101,'Non-fork public repos with a detected language',11)
@@ -193,12 +208,19 @@ def render(data):
             language_body += f'<g class="draw">{rect(side,y+8,max(1,405*value/denom),6,COLORS[i%len(COLORS)],3)}</g>'
     h=145+max(len(primary),len(languages))*37
     svg('languages.svg',h,language_body,'Repository language analysis',str(dict(primary))+'; bytes: '+str(dict(languages)))
-    stack = text(30,37,'04 / TOOLKIT IN PRACTICE',13,'#53f7ad',600)
-    groups=[('WEB INTERFACES','React · TypeScript · Razor · HTML · CSS'),('APPLICATIONS & DATA','C# · ASP.NET Core · EF Core · SQL Server'),('DESKTOP & GRAPHICS','Java · Swing · C++ · OpenGL / GLUT'),('RESEARCH & DELIVERY','Python · pandas · scikit-learn · GitHub Actions')]
+    stack = text(30,37,'TOOLKIT / FROM INTERFACE TO DELIVERY',13,'#53f7ad',600)
+    groups=[('APPLICATION ENGINEERING','C# · ASP.NET Core · EF Core · Identity'),
+            ('WEB INTERFACES','React · TypeScript · Razor · HTML · CSS'),
+            ('DATA & STORAGE','SQL Server · MySQL · relational data'),
+            ('DESKTOP & GRAPHICS','Java Swing · C++ · OpenGL / GLUT'),
+            ('RESEARCH ANALYSIS','Python · pandas · SciPy · scikit-learn'),
+            ('QUALITY & DELIVERY','Unit / integration · Playwright · CI')]
     for i,(label,tools) in enumerate(groups):
         x,y=24+(i%2)*470,60+(i//2)*90
         stack += rect(x,y,452,75) + text(x+16,y+26,label,12,COLORS[i],600) + text(x+16,y+53,tools,13,'#d9f5e5')
-    svg('stack.svg',253,stack,'Technologies evidenced in public repositories','; '.join(t for _,t in groups))
+    svg('stack.svg',343,stack,'Core toolkit from the CV and public projects','; '.join(t for _,t in groups))
+    repository_banner('projectflow-banner.svg','PROJECTFLOW',
+                      'C# / ASP.NET Core MVC / Web API / EF Core / SQL Server','FEATURED ENGINEERING')
     repository_banner('organization.svg','HOSPITAL APPOINTMENTS',
                       'PHP / MySQL / JavaScript / HTML / CSS','ORGANIZATION COLLABORATION')
     # Human-readable, fully usable fallback for image or animation failures.
