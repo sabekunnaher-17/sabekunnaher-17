@@ -1,6 +1,6 @@
 # Profile implementation and provenance
 
-Design: midnight-blue developer workspace with cyan/violet accents, compact analytical panels, quiet orbital motion, and editorial project descriptions. GitHub Markdown, supported HTML tables, and self-contained SVG images require no README JavaScript or custom page CSS. All essential content is visible in static frames. SVG motion honors `prefers-reduced-motion` where supported by the image renderer; clients may suppress SVG animation entirely.
+Design: dark emerald terminal workspace with green/teal accents, compact analytical panels, moving code streams, circuit packets and quiet orbital motion, and editorial project descriptions. GitHub Markdown, supported HTML tables, and self-contained SVG images require no README JavaScript or custom page CSS. All essential content is visible in static frames. SVG motion honors `prefers-reduced-motion` where supported by the image renderer; clients may suppress SVG animation entirely.
 
 ## Evidence reviewed
 
@@ -23,3 +23,9 @@ REST `/users/{login}`, paginated `/users/{login}/repos`, per-repo `/languages` a
 `python scripts/update_profile.py --offline` deterministically regenerates all SVGs and the text snapshot without network access. Online refresh requires a GitHub token in `GITHUB_TOKEN` with public GraphQL access. The scheduled/manual workflow uses the repository-scoped built-in token, standard Python, and a pinned checkout action. It runs daily at 01:25 Asia/Dhaka, subject to GitHub scheduling delays. Updates use the Actions bot identity and only commit generated changes. No backdating, Git history rewriting or artificial contribution creation is performed.
 
 Review changes to project descriptions manually as implementations evolve. The workflow refreshes metrics, not editorial claims. Check the latest Actions run before relying on freshness; the visible snapshot date remains the previous verified date if collection fails. A new retrieval timestamp can produce a bot maintenance commit even if counts remain unchanged. These bot updates are ordinary maintenance and are not attributed to Antora's contribution record.
+
+## Organization and repository motion update — October 21, 2026
+
+All six personally owned public repositories and the public hospital organization project use matching terminal-themed README visuals. Existing project documentation and team attribution are preserved. Organization PR #2 was verified as authored by sabekunnaher-17 and merged on October 16, 2026. It is featured separately from owned-repository metrics. No organization-wide branding or other developers’ profiles were changed.
+
+All in-range calendar cells use a green palette: dark green explicitly means zero contributions, brighter greens mean recorded contributions. Empty days were not turned into activity. Native GitHub heatmap colors and GitHub page backgrounds are controlled by GitHub, not README assets. Motion lives inside the SVG background; reduced-motion mode disables animations.

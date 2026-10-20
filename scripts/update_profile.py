@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 USER = 'sabekunnaher-17'
 START = date(2025, 10, 25)
 TZ = timezone(timedelta(hours=6))
-COLORS = ['#55dfd0', '#ab9aff', '#6daaff', '#ffce80', '#ff8fb4', '#c1d785', '#b8c3dc']
+COLORS = ['#53f7ad', '#73ddd0', '#b3f27b', '#54c790', '#b1edcf', '#68c5a4', '#d1f5df']
 
 
 def api(path, payload=None):
@@ -65,21 +65,46 @@ def collect():
             'repositories': evidence, 'collections': collections}
 
 
-def text(x, y, value, size=16, color='#a9b7cf', weight=400):
+def text(x, y, value, size=16, color='#adcbbb', weight=400):
     return f'<text x="{x}" y="{y}" fill="{color}" font-size="{size}" font-weight="{weight}">{escape(str(value))}</text>'
 
 
-def rect(x, y, w, h, fill='#131e32', rx=12):
+def rect(x, y, w, h, fill='#10231c', rx=12):
     return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{fill}"/>'
 
 
 def svg(name, height, body, title, description):
     content = f'''<svg xmlns="http://www.w3.org/2000/svg" width="960" height="{height}" viewBox="0 0 960 {height}" role="img" aria-labelledby="title desc">
 <title id="title">{escape(title)}</title><desc id="desc">{escape(description)}</desc>
-<defs><linearGradient id="accent"><stop stop-color="#55dfd0"/><stop offset="1" stop-color="#ab9aff"/></linearGradient></defs>
-<style>text{{font-family:Segoe UI,Arial,sans-serif}} .pulse{{animation:pulse 4s ease-in-out infinite}} .orbit{{transform-origin:802px 154px;animation:orbit 24s linear infinite}} .draw{{animation:draw 2s ease-out 1}} @keyframes orbit{{to{{transform:rotate(360deg)}}}} @keyframes pulse{{50%{{opacity:.35}}}} @keyframes draw{{from{{opacity:.25}}to{{opacity:1}}}} @media(prefers-reduced-motion:reduce){{*{{animation:none!important}}}}</style>
-{rect(0,0,960,height,'#0c1424',18)}{body}</svg>'''
+<defs><linearGradient id="accent"><stop stop-color="#53f7ad"/><stop offset="1" stop-color="#73ddd0"/></linearGradient></defs>
+<style>text{{font-family:Consolas,monospace}} .pulse{{animation:pulse 4s ease-in-out infinite}} .orbit{{transform-origin:802px 154px;animation:orbit 24s linear infinite}} .draw{{animation:draw 2s ease-out 1}} .rain{{animation:rain 12s linear infinite}} .packet{{animation:packet 10s ease-in-out infinite}} @keyframes rain{{from{{transform:translateY(-90px)}}to{{transform:translateY(150px)}}}} @keyframes packet{{0%,100%{{transform:translateX(0)}}50%{{transform:translateX(110px)}}}} @keyframes orbit{{to{{transform:rotate(360deg)}}}} @keyframes pulse{{50%{{opacity:.35}}}} @keyframes draw{{from{{opacity:.25}}to{{opacity:1}}}} @media(prefers-reduced-motion:reduce){{*{{animation:none!important}}}}</style>
+{rect(0,0,960,height,'#081510',18)}{ambient(height)}{body}</svg>'''
     (ROOT / 'assets' / name).write_text(content, encoding='utf-8')
+
+
+def ambient(height):
+    """Decorative code streams and circuit traces, never fabricated telemetry."""
+    result = '<g opacity=".12" stroke="#3c8a64" fill="none">'
+    for x in range(24,960,48):
+        result += f'<path d="M{x} 0V{height}"/>'
+    for y in range(24,height,48):
+        result += f'<path d="M0 {y}H960"/>'
+    result += '</g><g opacity=".07" class="rain">'
+    for i in range(11):
+        for j in range(5):
+            result += text(28+i*82,20+j*40,('0101','1010','0011')[(i+j)%3],12,'#53f7ad')
+    return result+'</g>'
+
+
+def repository_banner(filename, title, subtitle, label):
+    body = text(36,38,'ANTORA / '+label,13,'#53f7ad',600)
+    body += text(36,104,title,34,'#edfff5',700)
+    body += text(36,142,subtitle,15,'#adcbbb')
+    body += text(36,204,'> explore the source_',14,'#53f7ad')
+    body += '<path d="M655 191H735L765 160H908M735 191L765 222H908" fill="none" stroke="#285c43" stroke-width="2"/>'
+    body += '<g class="packet"><rect x="777" y="156" width="12" height="8" rx="2" fill="#53f7ad"/></g>'
+    body += '<g class="pulse"><circle cx="908" cy="222" r="5" fill="#73ddd0"/></g>'
+    svg(filename,250,body,title+' — animated repository banner','Decorative moving circuit packets and code rain. '+subtitle)
 
 
 def render(data):
@@ -99,31 +124,31 @@ def render(data):
     sums = {key: sum(c[key] for c in data['collections']) for key in (
         'totalCommitContributions', 'totalIssueContributions', 'totalPullRequestContributions',
         'totalPullRequestReviewContributions', 'totalRepositoryContributions')}
-    hero = text(40,40,'ANTORA / DEVELOPER WORKSPACE',14,'#55dfd0',600)
-    hero += text(40,106,'Sabekunnaher Antora',48,'#eef4ff',700)
-    hero += text(42,149,'CSE student. Full-stack developer in the making.',23,'#c0cbe0')
+    hero = text(40,40,'ANTORA / DEVELOPER WORKSPACE',13,'#53f7ad',600)
+    hero += text(40,106,'Sabekunnaher Antora',42,'#edfff5',700)
+    hero += text(42,149,'CSE student. Full-stack developer in the making.',18,'#b4d5c3')
     hero += text(42,190,'Building thoughtful software, from interfaces to data.',18)
-    hero += rect(40,219,525,39,'#192940',8) + text(56,245,'FOCUS   C# / ASP.NET Core / React / SQL Server',15,'#55dfd0')
+    hero += rect(40,219,525,39,'#153625',8) + text(56,245,'FOCUS   C# / ASP.NET Core / React / SQL Server',15,'#53f7ad')
     hero += text(42,295,'AIUB  /  DHAKA, BANGLADESH',13)
     for r in (55,85,115):
-        hero += f'<circle cx="802" cy="154" r="{r}" fill="none" stroke="#243654" stroke-width="1"/>'
-    hero += '<path d="M690 154H914M802 42V266" stroke="#243654"/>'
-    hero += '<circle class="pulse" cx="802" cy="154" r="42" fill="#183c46"/>'
-    hero += text(771,168,'SA',36,'#55dfd0',700)
-    hero += '<g class="orbit"><circle cx="887" cy="154" r="7" fill="#ab9aff"/></g>'
+        hero += f'<circle cx="802" cy="154" r="{r}" fill="none" stroke="#285c43" stroke-width="1"/>'
+    hero += '<path d="M690 154H914M802 42V266" stroke="#285c43"/>'
+    hero += '<circle class="pulse" cx="802" cy="154" r="42" fill="#17472d"/>'
+    hero += text(771,168,'SA',36,'#53f7ad',700)
+    hero += '<g class="orbit"><circle cx="887" cy="154" r="7" fill="#73ddd0"/></g>'
     svg('header.svg',326,hero,'Sabekunnaher Antora — developer workspace','CSE student at AIUB pursuing full-stack development. C#, ASP.NET Core, React and SQL Server.')
 
-    stats = text(30,37,'01 / GITHUB AT A GLANCE',14,'#55dfd0',600)
+    stats = text(30,37,'01 / GITHUB AT A GLANCE',13,'#53f7ad',600)
     stats += text(665,37,'PUBLIC DATA / '+data['end'],13)
     values = [(data['user']['public_repos'],'Public repositories'),(data['user']['followers'],'Followers'),
               (data['user']['following'],'Following'),(total,'Contributions in period')]
     for i,(value,label) in enumerate(values):
         x = 24 + i*235
-        stats += rect(x,60,220,117) + text(x+19,114,value,36,'#eef4ff',700) + text(x+19,148,label,14)
+        stats += rect(x,60,220,117) + text(x+19,114,value,36,'#edfff5',700) + text(x+19,148,label,12)
     svg('overview.svg',201,stats,'GitHub public account overview',str(values))
 
-    chart = text(30,37,'02 / THE BUILD LOG',14,'#55dfd0',600)
-    chart += text(30,73,f'{total} contributions  /  {active} active days',26,'#eef4ff',600)
+    chart = text(30,37,'02 / THE BUILD LOG',13,'#53f7ad',600)
+    chart += text(30,73,f'{total} contributions  /  {active} active days',26,'#edfff5',600)
     chart += text(30,101,f'{first:%d %b %Y} — {last:%d %b %Y} inclusive · current day may be partial',14)
     # Sunday-aligned columns; outside-period cells stay blank, zero days are dark.
     offset = (first.weekday()+1) % 7
@@ -138,15 +163,15 @@ def render(data):
             if dt.day == 1 or (i == 0 and (dt.replace(day=28)-dt).days > 3):
                 chart += text(x,130,dt.strftime('%b'),11)
             last_month = dt.month
-        color = '#1c2a40' if not count else ['#255c65','#358d93','#55c6bd','#75f2d5'][min(3,(count-1)//3)]
+        color = '#143b29' if not count else ['#23784a','#32aa69','#53d994','#8bffba'][min(3,(count-1)//3)]
         chart += f'<rect x="{x:.1f}" y="{y}" width="{cell-3:.1f}" height="17" rx="3" fill="{color}"><title>{d}: {count} contributions</title></rect>'
     chart += text(25,178,'Mon',11) + text(25,222,'Wed',11) + text(25,266,'Fri',11)
-    chart += text(30,325,'Darker = zero activity. Brighter = more contributions. Blank = outside the selected period.',13)
+    chart += text(30,325,'Dark green = zero. Brighter green = contributions. Blank = outside this period.',13)
     labels = [('Commits','totalCommitContributions'),('Pull requests','totalPullRequestContributions'),
               ('Issues','totalIssueContributions'),('Reviews','totalPullRequestReviewContributions'),('Repositories','totalRepositoryContributions')]
     for i,(label,key) in enumerate(labels):
         x=30+i*182
-        chart += rect(x,349,170,75) + text(x+14,380,sums[key],23,'#eef4ff',600) + text(x+14,405,label,13)
+        chart += rect(x,349,170,75) + text(x+14,380,sums[key],23,'#edfff5',600) + text(x+14,405,label,13)
     svg('activity.svg',447,chart,'Actual contribution activity',f'{data["start"]} to {data["end"]}: {total} contributions, {active} active days. '+str(sums))
 
     repos = [r for r in data['repositories'] if not r['fork']]
@@ -154,26 +179,28 @@ def render(data):
     languages = Counter()
     for r in repos:
         languages.update(r['languages'])
-    language_body = text(30,37,'03 / LANGUAGE SIGNALS',14,'#55dfd0',600)
-    language_body += text(30,75,'Primary language per repository',21,'#eef4ff',600)
-    language_body += text(510,75,'Language distribution by code bytes',21,'#eef4ff',600)
-    language_body += text(30,101,'Non-fork public repositories with a detected language',12)
-    language_body += text(510,101,'GitHub Linguist · not proficiency or time spent',12)
+    language_body = text(30,37,'03 / LANGUAGE SIGNALS',13,'#53f7ad',600)
+    language_body += text(30,75,'Primary language per repo',20,'#edfff5',600)
+    language_body += text(510,75,'Distribution by code bytes',20,'#edfff5',600)
+    language_body += text(30,101,'Non-fork public repos with a detected language',11)
+    language_body += text(510,101,'Linguist bytes · not proficiency or time spent',11)
     for side,items,denom in [(30,primary.most_common(),sum(primary.values())),(510,languages.most_common(),sum(languages.values()))]:
         for i,(lang,value) in enumerate(items):
             y=139+i*37
             label = f'{value} repo' + ('s' if value!=1 else '') if side==30 else f'{100*value/denom:.1f}%'
-            language_body += text(side,y,lang,14,'#dce6f8') + text(side+326,y,label,13)
-            language_body += rect(side,y+8,405,6,'#1c2a40',3)
+            language_body += text(side,y,lang,14,'#d9f5e5') + text(side+326,y,label,13)
+            language_body += rect(side,y+8,405,6,'#163627',3)
             language_body += f'<g class="draw">{rect(side,y+8,max(1,405*value/denom),6,COLORS[i%len(COLORS)],3)}</g>'
     h=145+max(len(primary),len(languages))*37
     svg('languages.svg',h,language_body,'Repository language analysis',str(dict(primary))+'; bytes: '+str(dict(languages)))
-    stack = text(30,37,'04 / TOOLKIT IN PRACTICE',14,'#55dfd0',600)
+    stack = text(30,37,'04 / TOOLKIT IN PRACTICE',13,'#53f7ad',600)
     groups=[('WEB INTERFACES','React · TypeScript · Razor · HTML · CSS'),('APPLICATIONS & DATA','C# · ASP.NET Core · EF Core · SQL Server'),('DESKTOP & GRAPHICS','Java · Swing · C++ · OpenGL / GLUT'),('RESEARCH & DELIVERY','Python · pandas · scikit-learn · GitHub Actions')]
     for i,(label,tools) in enumerate(groups):
         x,y=24+(i%2)*470,60+(i//2)*90
-        stack += rect(x,y,452,75) + text(x+16,y+26,label,12,COLORS[i],600) + text(x+16,y+53,tools,15,'#e2eaf9')
+        stack += rect(x,y,452,75) + text(x+16,y+26,label,12,COLORS[i],600) + text(x+16,y+53,tools,13,'#d9f5e5')
     svg('stack.svg',253,stack,'Technologies evidenced in public repositories','; '.join(t for _,t in groups))
+    repository_banner('organization.svg','HOSPITAL APPOINTMENTS',
+                      'PHP / MySQL / JavaScript / HTML / CSS','ORGANIZATION COLLABORATION')
     # Human-readable, fully usable fallback for image or animation failures.
     fallback = f'<!-- snapshot:start -->\nPublic repositories: **{data["user"]["public_repos"]}** · Followers: **{data["user"]["followers"]}** · Following: **{data["user"]["following"]}**\n\nContribution period: **{data["start"]} → {data["end"]}**, inclusive. **{total} contributions** across **{active} active days**.\n\nCommits: **{sums["totalCommitContributions"]}** · Pull requests: **{sums["totalPullRequestContributions"]}** · Issues: **{sums["totalIssueContributions"]}** · Reviews: **{sums["totalPullRequestReviewContributions"]}** · Repository contributions: **{sums["totalRepositoryContributions"]}**.\n<!-- snapshot:end -->'
     readme = ROOT / 'README.md'
