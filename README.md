@@ -11,6 +11,8 @@
 
 I'm **Antora**, a Computer Science and Engineering student at **American International University-Bangladesh**, based in Dhaka. I'm pursuing full-stack development, with a current focus on .NET applications, clear interfaces, and software testing. My public work spans web applications, Java desktop interfaces, computer graphics, and research analysis.
 
+**Activity disclosure:** My GitHub calendar and account totals include [decorative calendar artwork](https://github.com/sabekunnaher-17/contribution-calendar-art) with deliberately backdated author dates from October 25, 2025 through October 21, 2026. Those cells do not represent historical software development or a genuine daily coding streak.
+
 <img src="assets/overview.svg" width="100%" alt="GitHub account overview; exact figures are available in the text snapshot below." />
 
 <img src="assets/activity.svg" width="100%" alt="Daily contribution heatmap from October 25, 2025 to the latest refresh, with separate commit, pull request, issue, review and repository totals." />

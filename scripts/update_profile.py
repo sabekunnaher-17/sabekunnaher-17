@@ -147,9 +147,9 @@ def render(data):
         stats += rect(x,60,220,117) + text(x+19,114,value,36,'#edfff5',700) + text(x+19,148,label,12)
     svg('overview.svg',201,stats,'GitHub public account overview',str(values))
 
-    chart = text(30,37,'02 / THE BUILD LOG',13,'#53f7ad',600)
+    chart = text(30,37,'02 / ACTIVITY + DECORATIVE CALENDAR ART',13,'#53f7ad',600)
     chart += text(30,73,f'{total} contributions  /  {active} active days',26,'#edfff5',600)
-    chart += text(30,101,f'{first:%d %b %Y} — {last:%d %b %Y} inclusive · current day may be partial',14)
+    chart += text(30,101,'Includes backdated artwork cells; not a historical daily coding streak.',13)
     # Sunday-aligned columns; outside-period cells stay blank, zero days are dark.
     offset = (first.weekday()+1) % 7
     ncols = (len(days)+offset+6)//7
@@ -166,7 +166,7 @@ def render(data):
         color = '#143b29' if not count else ['#23784a','#32aa69','#53d994','#8bffba'][min(3,(count-1)//3)]
         chart += f'<rect x="{x:.1f}" y="{y}" width="{cell-3:.1f}" height="17" rx="3" fill="{color}"><title>{d}: {count} contributions</title></rect>'
     chart += text(25,178,'Mon',11) + text(25,222,'Wed',11) + text(25,266,'Fri',11)
-    chart += text(30,325,'Dark green = zero. Brighter green = contributions. Blank = outside this period.',13)
+    chart += text(30,325,f'{first:%d %b %Y} — {last:%d %b %Y} / Dark green = zero; brighter = GitHub-counted activity.',12)
     labels = [('Commits','totalCommitContributions'),('Pull requests','totalPullRequestContributions'),
               ('Issues','totalIssueContributions'),('Reviews','totalPullRequestReviewContributions'),('Repositories','totalRepositoryContributions')]
     for i,(label,key) in enumerate(labels):
