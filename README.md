@@ -1,6 +1,9 @@
-<p align="center">
-  <img src="assets/header.svg" width="100%" alt="Sabekunnaher Antora — CSE student at AIUB. Full-stack development, software testing and research. C#, ASP.NET Core, EF Core, SQL Server and Java." />
-</p>
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="assets/header-mobile-still.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/header-still.svg">
+  <source media="(max-width: 600px)" srcset="assets/header-mobile.svg">
+  <img src="assets/header.svg" width="1200" alt="Sabekunnaher Antora — CSE at AIUB. Full-stack development, testing and research. Animated developer workspace with a floating code companion.">
+</picture>
 
 <p align="center">
   <a href="https://sabekunnaher-17.github.io/"><strong>Portfolio</strong></a> &nbsp; / &nbsp;
@@ -19,7 +22,12 @@ I'm seeking opportunities to contribute in **software development, testing, and 
 
 #### 01 / [ProjectFlow](https://github.com/sabekunnaher-17/ProjectFlow)
 
-<a href="https://github.com/sabekunnaher-17/ProjectFlow"><img src="assets/projectflow-banner.svg" width="100%" alt="ProjectFlow — a full-stack project and task workspace using C#, ASP.NET Core MVC, Web API, EF Core and SQL Server. Decorative circuit motion." /></a>
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="assets/projectflow-banner-mobile-still.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/projectflow-banner-still.svg">
+  <source media="(max-width: 600px)" srcset="assets/projectflow-banner-mobile.svg">
+  <img src="assets/projectflow-banner.svg" width="1200" alt="ProjectFlow — animated Kanban illustration. Decorative task movement, not real issue activity.">
+</picture>
 
 **A project and task workspace built around organizations, people, and deadlines.**
 
@@ -38,7 +46,12 @@ I'm seeking opportunities to contribute in **software development, testing, and 
 
 #### 02 / [Hospital Appointment System](https://github.com/hospital-appointment-team/hospital-appointment-system) · organization project
 
-<a href="https://github.com/hospital-appointment-team/hospital-appointment-system"><img src="assets/organization.svg" width="100%" alt="Hospital Appointment System — PHP MVC, MySQL, HTML, CSS and JavaScript. A collaborative organization project, illustrated with decorative moving circuit packets." /></a>
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="assets/organization-mobile-still.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/organization-still.svg">
+  <source media="(max-width: 600px)" srcset="assets/organization-mobile.svg">
+  <img src="assets/organization.svg" width="1200" alt="Hospital Appointment System — doctor, slot, booking and dashboard workflow illustration. Organization teamwork; no live service telemetry.">
+</picture>
 
 **PHP MVC · MySQL · HTML · CSS · JavaScript**
 

@@ -10,9 +10,12 @@ from html import escape
 import json
 import os
 from pathlib import Path
+import sys
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'scripts'))
+from repository_motion import write_variants
 USER = 'sabekunnaher-17'
 START = date(2025, 10, 25)
 TZ = timezone(timedelta(hours=6))
@@ -223,6 +226,10 @@ def render(data):
                       'C# / ASP.NET Core MVC / Web API / EF Core / SQL Server','FEATURED ENGINEERING')
     repository_banner('organization.svg','HOSPITAL APPOINTMENTS',
                       'PHP / MySQL / JavaScript / HTML / CSS','ORGANIZATION COLLABORATION')
+    # Responsive, project-specific scenes. Static alternatives contain no SMIL.
+    write_variants(ROOT/'assets', 'header', 'profile')
+    write_variants(ROOT/'assets', 'projectflow-banner', 'projectflow')
+    write_variants(ROOT/'assets', 'organization', 'hospital')
     # Human-readable, fully usable fallback for image or animation failures.
     fallback = f'<!-- snapshot:start -->\nPublic repositories: **{data["user"]["public_repos"]}** · Followers: **{data["user"]["followers"]}** · Following: **{data["user"]["following"]}**\n\nContribution period: **{data["start"]} → {data["end"]}**, inclusive. **{total} contributions** across **{active} active days**.\n\nCommits: **{sums["totalCommitContributions"]}** · Pull requests: **{sums["totalPullRequestContributions"]}** · Issues: **{sums["totalIssueContributions"]}** · Reviews: **{sums["totalPullRequestReviewContributions"]}** · Repository contributions: **{sums["totalRepositoryContributions"]}**.\n<!-- snapshot:end -->'
     readme = ROOT / 'README.md'
