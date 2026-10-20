@@ -21,11 +21,11 @@ I'm **Antora**, a Computer Science and Engineering student at **American Interna
 <summary>Read the numbers &amp; understand the data</summary>
 
 <!-- snapshot:start -->
-Public repositories: **6** · Followers: **0** · Following: **0**
+Public repositories: **7** · Followers: **0** · Following: **0**
 
-Contribution period: **2025-10-25 → 2026-10-21**, inclusive. **65 contributions** across **6 active days**.
+Contribution period: **2025-10-25 → 2026-10-21**, inclusive. **429 contributions** across **362 active days**.
 
-Commits: **57** · Pull requests: **1** · Issues: **0** · Reviews: **0** · Repository contributions: **6**.
+Commits: **420** · Pull requests: **1** · Issues: **0** · Reviews: **0** · Repository contributions: **7**.
 <!-- snapshot:end -->
 
 Source: GitHub REST and GraphQL APIs. The daily chart uses GitHub's contribution-calendar dates; collection boundaries use Asia/Dhaka (+06:00). The current day is partial. Zero days are retained. Counts follow GitHub contribution eligibility rules, so they are not all authored commits or all activity events. Repository creation is a contribution type; the category totals need not sum to the calendar total. Private contribution details are not published.
