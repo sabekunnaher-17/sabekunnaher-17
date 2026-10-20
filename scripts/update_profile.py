@@ -1,0 +1,194 @@
+"""Fetch public GitHub evidence and render a self-contained profile dashboard.
+
+GITHUB_TOKEN is required for GraphQL. No third-party libraries are needed.
+Run with --offline to regenerate from the checked-in snapshot.
+"""
+import argparse
+from collections import Counter
+from datetime import datetime, date, timedelta, timezone
+from html import escape
+import json
+import os
+from pathlib import Path
+import urllib.request
+
+ROOT = Path(__file__).resolve().parents[1]
+USER = 'sabekunnaher-17'
+START = date(2025, 10, 25)
+TZ = timezone(timedelta(hours=6))
+COLORS = ['#55dfd0', '#ab9aff', '#6daaff', '#ffce80', '#ff8fb4', '#c1d785', '#b8c3dc']
+
+
+def api(path, payload=None):
+    headers = {'User-Agent': 'antora-profile', 'Accept': 'application/vnd.github+json'}
+    if os.environ.get('GITHUB_TOKEN'):
+        headers['Authorization'] = 'Bearer ' + os.environ['GITHUB_TOKEN']
+    req = urllib.request.Request('https://api.github.com' + path, headers=headers,
+                                 data=json.dumps(payload).encode() if payload else None)
+    with urllib.request.urlopen(req, timeout=45) as response:
+        return json.load(response)
+
+
+def collect():
+    today = datetime.now(TZ).date()
+    user = api('/users/' + USER)
+    repos, page = [], 1
+    while True:
+        batch = api(f'/users/{USER}/repos?per_page=100&page={page}')
+        repos.extend(batch)
+        if len(batch) < 100:
+            break
+        page += 1
+    evidence = []
+    for repo in repos:
+        evidence.append({k: repo[k] for k in ('name', 'html_url', 'language', 'fork', 'description', 'homepage')})
+        evidence[-1]['languages'] = api(f'/repos/{USER}/{repo["name"]}/languages')
+        evidence[-1]['head'] = api(f'/repos/{USER}/{repo["name"]}/commits/{repo["default_branch"]}')['sha']
+    # GitHub limits contributionsCollection to one year per query.
+    collections, cursor = [], START
+    while cursor <= today:
+        end = min(today, cursor + timedelta(days=364))
+        query = '''query($login:String!,$from:DateTime!,$to:DateTime!){user(login:$login){
+          contributionsCollection(from:$from,to:$to){startedAt endedAt
+          totalCommitContributions totalIssueContributions totalPullRequestContributions
+          totalPullRequestReviewContributions totalRepositoryContributions restrictedContributionsCount
+          contributionCalendar{totalContributions weeks{contributionDays{date contributionCount}}}}}}'''
+        data = api('/graphql', {'query': query, 'variables': {'login': USER,
+            'from': f'{cursor}T00:00:00+06:00', 'to': f'{end}T23:59:59+06:00'}})
+        if data.get('errors'):
+            raise RuntimeError(data['errors'])
+        collections.append(data['data']['user']['contributionsCollection'])
+        cursor = end + timedelta(days=1)
+    return {'source': 'GitHub REST v3 and GraphQL v4', 'retrieved_at': datetime.now(TZ).isoformat(),
+            'start': str(START), 'end': str(today),
+            'user': {k: user[k] for k in ('login', 'name', 'public_repos', 'followers', 'following', 'bio', 'blog')},
+            'repositories': evidence, 'collections': collections}
+
+
+def text(x, y, value, size=16, color='#a9b7cf', weight=400):
+    return f'<text x="{x}" y="{y}" fill="{color}" font-size="{size}" font-weight="{weight}">{escape(str(value))}</text>'
+
+
+def rect(x, y, w, h, fill='#131e32', rx=12):
+    return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{fill}"/>'
+
+
+def svg(name, height, body, title, description):
+    content = f'''<svg xmlns="http://www.w3.org/2000/svg" width="960" height="{height}" viewBox="0 0 960 {height}" role="img" aria-labelledby="title desc">
+<title id="title">{escape(title)}</title><desc id="desc">{escape(description)}</desc>
+<defs><linearGradient id="accent"><stop stop-color="#55dfd0"/><stop offset="1" stop-color="#ab9aff"/></linearGradient></defs>
+<style>text{{font-family:Segoe UI,Arial,sans-serif}} .pulse{{animation:pulse 4s ease-in-out infinite}} .orbit{{transform-origin:802px 154px;animation:orbit 24s linear infinite}} .draw{{animation:draw 2s ease-out 1}} @keyframes orbit{{to{{transform:rotate(360deg)}}}} @keyframes pulse{{50%{{opacity:.35}}}} @keyframes draw{{from{{opacity:.25}}to{{opacity:1}}}} @media(prefers-reduced-motion:reduce){{*{{animation:none!important}}}}</style>
+{rect(0,0,960,height,'#0c1424',18)}{body}</svg>'''
+    (ROOT / 'assets' / name).write_text(content, encoding='utf-8')
+
+
+def render(data):
+    (ROOT / 'assets').mkdir(exist_ok=True)
+    days = {}
+    for collection in data['collections']:
+        for week in collection['contributionCalendar']['weeks']:
+            for day in week['contributionDays']:
+                if data['start'] <= day['date'] <= data['end']:
+                    days[day['date']] = day['contributionCount']
+    first, last = date.fromisoformat(data['start']), date.fromisoformat(data['end'])
+    expected = [(first + timedelta(days=i)).isoformat() for i in range((last-first).days+1)]
+    if sorted(days) != expected:
+        raise ValueError('Contribution calendar is incomplete; refusing to replace verified assets')
+    total = sum(days.values())
+    active = sum(v > 0 for v in days.values())
+    sums = {key: sum(c[key] for c in data['collections']) for key in (
+        'totalCommitContributions', 'totalIssueContributions', 'totalPullRequestContributions',
+        'totalPullRequestReviewContributions', 'totalRepositoryContributions')}
+    hero = text(40,40,'ANTORA / DEVELOPER WORKSPACE',14,'#55dfd0',600)
+    hero += text(40,106,'Sabekunnaher Antora',48,'#eef4ff',700)
+    hero += text(42,149,'CSE student. Full-stack developer in the making.',23,'#c0cbe0')
+    hero += text(42,190,'Building thoughtful software, from interfaces to data.',18)
+    hero += rect(40,219,525,39,'#192940',8) + text(56,245,'FOCUS   C# / ASP.NET Core / React / SQL Server',15,'#55dfd0')
+    hero += text(42,295,'AIUB  /  DHAKA, BANGLADESH',13)
+    for r in (55,85,115):
+        hero += f'<circle cx="802" cy="154" r="{r}" fill="none" stroke="#243654" stroke-width="1"/>'
+    hero += '<path d="M690 154H914M802 42V266" stroke="#243654"/>'
+    hero += '<circle class="pulse" cx="802" cy="154" r="42" fill="#183c46"/>'
+    hero += text(771,168,'SA',36,'#55dfd0',700)
+    hero += '<g class="orbit"><circle cx="887" cy="154" r="7" fill="#ab9aff"/></g>'
+    svg('header.svg',326,hero,'Sabekunnaher Antora — developer workspace','CSE student at AIUB pursuing full-stack development. C#, ASP.NET Core, React and SQL Server.')
+
+    stats = text(30,37,'01 / GITHUB AT A GLANCE',14,'#55dfd0',600)
+    stats += text(665,37,'PUBLIC DATA / '+data['end'],13)
+    values = [(data['user']['public_repos'],'Public repositories'),(data['user']['followers'],'Followers'),
+              (data['user']['following'],'Following'),(total,'Contributions in period')]
+    for i,(value,label) in enumerate(values):
+        x = 24 + i*235
+        stats += rect(x,60,220,117) + text(x+19,114,value,36,'#eef4ff',700) + text(x+19,148,label,14)
+    svg('overview.svg',201,stats,'GitHub public account overview',str(values))
+
+    chart = text(30,37,'02 / THE BUILD LOG',14,'#55dfd0',600)
+    chart += text(30,73,f'{total} contributions  /  {active} active days',26,'#eef4ff',600)
+    chart += text(30,101,f'{first:%d %b %Y} — {last:%d %b %Y} inclusive · current day may be partial',14)
+    # Sunday-aligned columns; outside-period cells stay blank, zero days are dark.
+    offset = (first.weekday()+1) % 7
+    ncols = (len(days)+offset+6)//7
+    cell = min(16, 858/ncols)
+    last_month = None
+    for i,(d,count) in enumerate(sorted(days.items())):
+        dt = date.fromisoformat(d)
+        col,row = divmod(i+offset,7)
+        x,y = 65+col*cell,143+row*22
+        if dt.month != last_month:
+            if dt.day == 1 or (i == 0 and (dt.replace(day=28)-dt).days > 3):
+                chart += text(x,130,dt.strftime('%b'),11)
+            last_month = dt.month
+        color = '#1c2a40' if not count else ['#255c65','#358d93','#55c6bd','#75f2d5'][min(3,(count-1)//3)]
+        chart += f'<rect x="{x:.1f}" y="{y}" width="{cell-3:.1f}" height="17" rx="3" fill="{color}"><title>{d}: {count} contributions</title></rect>'
+    chart += text(25,178,'Mon',11) + text(25,222,'Wed',11) + text(25,266,'Fri',11)
+    chart += text(30,325,'Darker = zero activity. Brighter = more contributions. Blank = outside the selected period.',13)
+    labels = [('Commits','totalCommitContributions'),('Pull requests','totalPullRequestContributions'),
+              ('Issues','totalIssueContributions'),('Reviews','totalPullRequestReviewContributions'),('Repositories','totalRepositoryContributions')]
+    for i,(label,key) in enumerate(labels):
+        x=30+i*182
+        chart += rect(x,349,170,75) + text(x+14,380,sums[key],23,'#eef4ff',600) + text(x+14,405,label,13)
+    svg('activity.svg',447,chart,'Actual contribution activity',f'{data["start"]} to {data["end"]}: {total} contributions, {active} active days. '+str(sums))
+
+    repos = [r for r in data['repositories'] if not r['fork']]
+    primary = Counter(r['language'] for r in repos if r['language'])
+    languages = Counter()
+    for r in repos:
+        languages.update(r['languages'])
+    language_body = text(30,37,'03 / LANGUAGE SIGNALS',14,'#55dfd0',600)
+    language_body += text(30,75,'Primary language per repository',21,'#eef4ff',600)
+    language_body += text(510,75,'Language distribution by code bytes',21,'#eef4ff',600)
+    language_body += text(30,101,'Non-fork public repositories with a detected language',12)
+    language_body += text(510,101,'GitHub Linguist · not proficiency or time spent',12)
+    for side,items,denom in [(30,primary.most_common(),sum(primary.values())),(510,languages.most_common(),sum(languages.values()))]:
+        for i,(lang,value) in enumerate(items):
+            y=139+i*37
+            label = f'{value} repo' + ('s' if value!=1 else '') if side==30 else f'{100*value/denom:.1f}%'
+            language_body += text(side,y,lang,14,'#dce6f8') + text(side+326,y,label,13)
+            language_body += rect(side,y+8,405,6,'#1c2a40',3)
+            language_body += f'<g class="draw">{rect(side,y+8,max(1,405*value/denom),6,COLORS[i%len(COLORS)],3)}</g>'
+    h=145+max(len(primary),len(languages))*37
+    svg('languages.svg',h,language_body,'Repository language analysis',str(dict(primary))+'; bytes: '+str(dict(languages)))
+    stack = text(30,37,'04 / TOOLKIT IN PRACTICE',14,'#55dfd0',600)
+    groups=[('WEB INTERFACES','React · TypeScript · Razor · HTML · CSS'),('APPLICATIONS & DATA','C# · ASP.NET Core · EF Core · SQL Server'),('DESKTOP & GRAPHICS','Java · Swing · C++ · OpenGL / GLUT'),('RESEARCH & DELIVERY','Python · pandas · scikit-learn · GitHub Actions')]
+    for i,(label,tools) in enumerate(groups):
+        x,y=24+(i%2)*470,60+(i//2)*90
+        stack += rect(x,y,452,75) + text(x+16,y+26,label,12,COLORS[i],600) + text(x+16,y+53,tools,15,'#e2eaf9')
+    svg('stack.svg',253,stack,'Technologies evidenced in public repositories','; '.join(t for _,t in groups))
+    # Human-readable, fully usable fallback for image or animation failures.
+    fallback = f'<!-- snapshot:start -->\nPublic repositories: **{data["user"]["public_repos"]}** · Followers: **{data["user"]["followers"]}** · Following: **{data["user"]["following"]}**\n\nContribution period: **{data["start"]} → {data["end"]}**, inclusive. **{total} contributions** across **{active} active days**.\n\nCommits: **{sums["totalCommitContributions"]}** · Pull requests: **{sums["totalPullRequestContributions"]}** · Issues: **{sums["totalIssueContributions"]}** · Reviews: **{sums["totalPullRequestReviewContributions"]}** · Repository contributions: **{sums["totalRepositoryContributions"]}**.\n<!-- snapshot:end -->'
+    readme = ROOT / 'README.md'
+    import re
+    readme.write_text(re.sub(r'<!-- snapshot:start -->.*?<!-- snapshot:end -->',lambda _:fallback,readme.read_text(encoding='utf8'),flags=re.S),encoding='utf8')
+
+
+if __name__ == '__main__':
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--offline',action='store_true')
+    args=parser.parse_args()
+    path=ROOT/'data'/'github.json'
+    data=json.loads(path.read_text()) if args.offline else collect()
+    render(data)
+    if not args.offline:
+        path.parent.mkdir(exist_ok=True)
+        path.write_text(json.dumps(data,indent=2)+'\n',encoding='utf8')
+    print('Rendered verified profile for '+data['start']+' through '+data['end'])
