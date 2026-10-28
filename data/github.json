@@ -1,18 +1,31 @@
 {
   "source": "GitHub REST v3 and GraphQL v4",
-  "retrieved_at": "2026-10-28T05:00:40.614543+06:00",
+  "retrieved_at": "2026-10-29T05:20:27.469824+06:00",
   "start": "2025-10-25",
-  "end": "2026-10-28",
+  "end": "2026-10-29",
   "user": {
     "login": "sabekunnaher-17",
     "name": "Sabekunnaher Antora",
-    "public_repos": 7,
+    "public_repos": 8,
     "followers": 0,
     "following": 0,
     "bio": "CSE Student at AIUB | Aspiring Software Engineer | C++ | C# | ASP.NET Core MVC | SQL | OpenGL | Always Learning",
     "blog": ""
   },
   "repositories": [
+    {
+      "name": "AdvanceWebTec",
+      "html_url": "https://github.com/sabekunnaher-17/AdvanceWebTec",
+      "language": "TypeScript",
+      "fork": false,
+      "description": null,
+      "homepage": null,
+      "languages": {
+        "TypeScript": 16894,
+        "JavaScript": 7421
+      },
+      "head": "32cbf5bb0e1891ce8db12474a9a4b54726b82178"
+    },
     {
       "name": "contribution-calendar-art",
       "html_url": "https://github.com/sabekunnaher-17/contribution-calendar-art",
@@ -62,7 +75,7 @@
       "languages": {
         "Python": 33859
       },
-      "head": "be58d18468ecec8ef01b6cdec7dd3580add44c76"
+      "head": "34927e75e79d2abc5d248f3158c150930704cde7"
     },
     {
       "name": "sabekunnaher-17.github.io",
@@ -1797,15 +1810,15 @@
     },
     {
       "startedAt": "2026-10-24T18:00:00Z",
-      "endedAt": "2026-10-28T17:59:59Z",
-      "totalCommitContributions": 0,
+      "endedAt": "2026-10-29T17:59:59Z",
+      "totalCommitContributions": 1,
       "totalIssueContributions": 0,
       "totalPullRequestContributions": 0,
       "totalPullRequestReviewContributions": 0,
-      "totalRepositoryContributions": 0,
+      "totalRepositoryContributions": 1,
       "restrictedContributionsCount": 0,
       "contributionCalendar": {
-        "totalContributions": 0,
+        "totalContributions": 2,
         "weeks": [
           {
             "contributionDays": [
@@ -1831,6 +1844,10 @@
               },
               {
                 "date": "2026-10-28",
+                "contributionCount": 2
+              },
+              {
+                "date": "2026-10-29",
                 "contributionCount": 0
               }
             ]

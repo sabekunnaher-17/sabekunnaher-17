@@ -124,11 +124,11 @@ Coursework includes algorithms, databases, object-oriented programming, software
 <img src="assets/activity.svg" width="100%" alt="GitHub-counted daily activity including disclosed backdated calendar artwork. Not a historical daily coding streak." />
 
 <!-- snapshot:start -->
-Public repositories: **7** · Followers: **0** · Following: **0**
+Public repositories: **8** · Followers: **0** · Following: **0**
 
-Contribution period: **2025-10-25 → 2026-10-28**, inclusive. **445 contributions** across **363 active days**.
+Contribution period: **2025-10-25 → 2026-10-29**, inclusive. **447 contributions** across **364 active days**.
 
-Commits: **436** · Pull requests: **1** · Issues: **0** · Reviews: **0** · Repository contributions: **7**.
+Commits: **437** · Pull requests: **1** · Issues: **0** · Reviews: **0** · Repository contributions: **8**.
 <!-- snapshot:end -->
 
 Source: GitHub REST and GraphQL APIs. Calendar dates are retained as returned by GitHub; query boundaries use Asia/Dhaka (+06:00). The current day is partial. Contribution categories follow GitHub eligibility rules and may not sum to the calendar total. Organization work is featured separately from personally owned repository metrics.
