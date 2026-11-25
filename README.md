@@ -126,7 +126,7 @@ Coursework includes algorithms, databases, object-oriented programming, software
 <!-- snapshot:start -->
 Public repositories: **8** · Followers: **0** · Following: **0**
 
-Contribution period: **2025-10-25 → 2026-11-24**, inclusive. **475 contributions** across **370 active days**.
+Contribution period: **2025-10-25 → 2026-11-25**, inclusive. **475 contributions** across **370 active days**.
 
 Commits: **453** · Pull requests: **12** · Issues: **0** · Reviews: **0** · Repository contributions: **8**.
 <!-- snapshot:end -->
